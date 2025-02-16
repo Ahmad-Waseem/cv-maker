@@ -1,24 +1,173 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
-    <title>CV Maker</title>
-    <meta http-equiv="Content-Type" content="text/html" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CV Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .cv-preview {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 100%;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="Content-Language" content="en-us" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        .cv-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
 
+        .cv-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .cv-contact {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+
+        .cv-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .cv-section h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .skill-box {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.3rem;
+            display: inline-block;
+        }
+
+        .cv-footer {
+            position: relative;
+            bottom: 0;
+            width: 90%;
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-4">CV Generator</h1>
+
+        <form id="FormCV" class="bg-white p-3 rounded shadow-sm mb-5"><!--white bg with 3rd padding, -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control rounded-pill" id="fullName" required>
+
+                    <label for="experience" class="form-label">Experience</label>
+                    <textarea class="form-control rounded-pill" id="experience" rows="3" required></textarea>
+
+                    <label for="cgpa" class="form-label ">CGPA</label> <!--Min, Max in Bootstrap 5.3.3-->
+                    <input type="number" step="0.01" class="form-control rounded-pill" id="cgpa" placeholder="Out of 4"
+                        min="0" max="4">
+
+                    <label for="education" class="form-label">Education</label>
+                    <textarea class="form-control rounded-pill" id="education" rows="3" required></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label for="about" class="form-label">About Me</label>
+                    <textarea class="form-control rounded-pill" id="about" rows="3" required></textarea>
+
+                    <label for="contact" class="form-label">Contact Info</label>
+                    <input type="text" class="form-control rounded-pill" id="contact" required>
+
+                    <label for="skills" class="form-label">Skills (comma-separated)</label>
+                    <input type="text" class="form-control rounded-pill" id="skills" required>
+
+                    <label for="address" class="form-label">Address</label>
+                    <textarea class="form-control rounded-pill" id="address" rows="2" required></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mt-4">Generate CV</button>
+        </form>
+
+        <div id="cvPreview" class="cv-preview d-none"></div>
+        <!--Jugarh is to make z index min and bg z index +1 from it.. when to show, change z-index of cv-preview-->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('FormCV').addEventListener('submit', function (e) {
+            e.preventDefault(); // Do not hit api address at form action
+
+            const getValue = (id) => document.getElementById(id).value.trim();      //get all ids
+            const fullName = getValue('fullName');
+            const experience = getValue('experience');
+            const cgpa = getValue('cgpa');
+            const education = getValue('education');
+            const about = getValue('about');
+            const contact = getValue('contact');
+            const address = getValue('address');
+            const skills = getValue('skills').split(',').map(s => s.trim()).filter(s => s);
+
+            if (!fullName || !experience || !cgpa || !education || !about || !contact || !skills.length || !address) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const cv = `
+                <div class="cv-header">
+                    <div class="cv-name">${fullName}</div>
+                    <div class="cv-contact">${contact} | ${address}</div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <section class="cv-section">
+                            <h2>About Me</h2>
+                            <p>${about}</p>
+                        </section>
+                        <section class="cv-section">
+                            <h2>Experience</h2>
+                            <p>${experience}</p>
+                        </section>
+                        <section class="cv-section">
+                            <h2>Education</h2>
+                            <p>${education}</p>
+                        </section>
+                    </div>
+                    <div class="col-md-6">
+                        <section class="cv-section">
+                            <h2>CGPA</h2>
+                            <p>${cgpa}</p>
+                        </section>
+                        <section class="cv-section">
+                            <h2>Skills</h2>
+                            <div>${skills.map(skill => `<span class="skill-box">${skill}</span>`).join('')}</div>
+                        </section>
+                    </div>
+                    <div class="cv-footer text-center mt-4 py-3">
+                        <p>Thank you for reviewing my CV. I look forward to discussing how I can contribute.</p>
+                        <p>For further details, please feel free to reach out.</p>
+                    </div>
+
+                </div>
+            `;
 
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+        });
+    </script>
 </body>
 
 </html>
