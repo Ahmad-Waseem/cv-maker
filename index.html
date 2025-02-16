@@ -165,7 +165,17 @@
                 </div>
             `;
 
+            const preview = document.getElementById('cvPreview');
+            preview.innerHTML = cv;
+            preview.classList.remove('d-none'); //rmv none-display
 
+            const cvHeader = document.getElementsByClassName('cv-header'); //find cv header
+            if (cvHeader[0]) {
+                cvHeader[0].scrollIntoView({ behavior: 'smooth' });
+            } else {
+                console.error("Not Found");
+                alert("Cannot Generate");
+            }
         });
     </script>
 </body>
